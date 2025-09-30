@@ -7,6 +7,68 @@ import cv2  # import the opencv library
 import numpy as np
 import argparse
 
+def bbox_car_per_lane(car_lane, bbox):
+    bbox['x2'] = bbox['x'] + bbox['w']
+    bbox['y2'] = bbox['y'] + bbox['h']
+    bbox['car_lane'] = car_lane
+
+    #average to calculate pixel of the matrix
+    bbox['previous_average'] = None
+    return bbox
+
+def draw_rect_per_lane(bbox,frame_gui):
+    # Draw the box on the image
+    cv2.rectangle(frame_gui, (bbox['x'], bbox['y']), (bbox['x2'], bbox['y2']),
+                    (255, 0, 0), 2)    
+    return frame_gui
+
+def chage_event_per_lane(frame_gui, frame_gray, bbox):
+    box_values = frame_gray[bbox['y']:bbox['y2'],  bbox['x']:bbox['x2']]
+    # print('box_values = ' + str(box_values))
+
+    average = round(np.mean(box_values), 1)  # type: ignore
+    # print('average = ' + str(average))
+    cv2.putText(
+        frame_gui, 'mean ' + str(average),
+        (bbox['x'],
+        bbox['y'] - 10),
+        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+
+    # Compute the difference between the previous and the current
+    if bbox['previous_average'] is None:
+        difference = 0  # TODO João has questions
+    else:
+        difference = round(abs(average - bbox['previous_average']), 1)
+
+    bbox['previous_average'] = average  # update previous average
+    cv2.putText(
+        frame_gui, 'dif ' + str(difference),
+        (bbox['x'],
+        bbox['y'] - 35),
+        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+
+    # Change detection event
+    #---------------------------------------------------------------------fazer depois
+    change_detection_threshold = 10
+    if difference > change_detection_threshold:
+        change_event = True
+    else:
+        change_event = False
+
+    # Selecting color for putting the change event text as a function of the value
+    if change_event == True:
+        color = (0, 0, 255)
+    else:
+        color = (255, 0, 0)
+
+    cv2.putText(
+        frame_gui, 'event ' + str(change_event),
+        (bbox['x'],
+        bbox['y'] - 70),
+        cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2, cv2.LINE_AA)
+    
+    return frame_gui, frame_gray
+
 
 def main():
 
@@ -35,10 +97,20 @@ def main():
         print("Image sequence opened successfully!")
 
     # Define bbox coordinates
-    bbox = {'x': 699, 'y': 300, 'w': 808-699, 'h': 500-300}
-    # Copute bottom right corner
-    bbox['x2'] = bbox['x'] + bbox['w']
-    bbox['y2'] = bbox['y'] + bbox['h']
+    bbox_lane_1_coord = {'x': 320, 'y': 400, 'w': 100, 'h': 200}
+    bbox_lane_2_coord = {'x': 500, 'y': 400, 'w': 100, 'h': 200}
+    bbox_lane_3_coord = {'x': 700, 'y': 400, 'w': 100, 'h': 200}
+    bbox_lane_4_coord = {'x': 920, 'y': 400, 'w': 100, 'h': 200}
+    
+    bbox_lane_1 = bbox_car_per_lane(1, bbox_lane_1_coord)
+    bbox_lane_2 = bbox_car_per_lane(2, bbox_lane_2_coord)
+    bbox_lane_3 = bbox_car_per_lane(3, bbox_lane_3_coord)
+    bbox_lane_4 = bbox_car_per_lane(4, bbox_lane_4_coord)
+
+    # print(bbox_lane_1)
+    # print(bbox_lane_2 )
+    # print(bbox_lane_3)
+    # print(bbox_lane_4)
 
     # ------------------------------------
     # Read and display all frames
@@ -49,7 +121,8 @@ def main():
     previous_change_event_2 = False
     previous_change_event_3 = False
     previous_change_event_4 = False
-    number_of_cars = 0
+
+    total_number_of_cars = 0
     frame_count = 0
     while True:
 
@@ -66,12 +139,19 @@ def main():
             (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
         # Draw the box on the image
-        cv2.rectangle(frame_gui, (bbox['x'], bbox['y']), (bbox['x2'], bbox['y2']),
-                      (255, 0, 0), 2)
+        draw_rect_per_lane(bbox_lane_1,frame_gui)
+        draw_rect_per_lane(bbox_lane_2,frame_gui)
+        draw_rect_per_lane(bbox_lane_3,frame_gui)
+        draw_rect_per_lane(bbox_lane_4,frame_gui)
+
+        # cv2.imshow('Image GUI', frame_gui)
+        # cv2.waitKey(0)
+        # exit(0)
 
         # Compute grayscale image for analysing
         frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
+        # ------------------------------------------------------------------------------
         box_values = frame_gray[bbox['y']:bbox['y2'],  bbox['x']:bbox['x2']]
         print('box_values = ' + str(box_values))
 
@@ -136,7 +216,7 @@ def main():
 
         # Draw the number of cars
         cv2.putText(
-            frame_gui, '#cars ' + str(number_of_cars),
+            frame_gui, '#cars ' + str(total_number_of_cars),
             (10, 70), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
         # Draw image
@@ -144,7 +224,7 @@ def main():
         # cv2.imshow('Image gray', frame_gray)
 
         # Break if q is pressed
-        key = cv2.waitKey(0)
+        key = cv2.waitKey(20)
         # print('key = ' + str(key))
         if key == 113:
             print('You pressed q. Quitting.')
