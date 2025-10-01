@@ -14,6 +14,8 @@ def bbox_car_per_lane(car_lane, bbox):
 
     #average to calculate pixel of the matrix
     bbox['previous_average'] = None
+    bbox['change_event'] = False
+
     return bbox
 
 def draw_rect_per_lane(bbox,frame_gui):
@@ -48,27 +50,38 @@ def chage_event_per_lane(frame_gui, frame_gray, bbox):
         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
 
     # Change detection event
-    #---------------------------------------------------------------------fazer depois
     change_detection_threshold = 10
     if difference > change_detection_threshold:
-        change_event = True
+        bbox['change_event'] = True
     else:
-        change_event = False
+        bbox['change_event'] = False
 
     # Selecting color for putting the change event text as a function of the value
-    if change_event == True:
+    if bbox['change_event'] == True:
         color = (0, 0, 255)
     else:
         color = (255, 0, 0)
 
     cv2.putText(
-        frame_gui, 'event ' + str(change_event),
+        frame_gui, 'event ' + str(bbox['change_event']),
         (bbox['x'],
         bbox['y'] - 70),
         cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2, cv2.LINE_AA)
     
-    return frame_gui, frame_gray
+    return frame_gui, frame_gray, bbox
 
+def count_car_per_lane(bbox):
+    print('Hello World')
+    #     # Option 2
+    # if previous_change_event_4 == False and previous_change_event_3 == False and previous_change_event_2 == False and previous_change_event_1 == False and previous_change_event == False and change_event == True:  # a rising edge
+    #     number_of_cars += 1
+
+    # previous_change_event_4 = previous_change_event_3
+    # previous_change_event_3 = previous_change_event_2
+    # previous_change_event_2 = previous_change_event_1
+    # previous_change_event_1 = previous_change_event
+    
+    # previous_change_event = change_event
 
 def main():
 
@@ -97,10 +110,10 @@ def main():
         print("Image sequence opened successfully!")
 
     # Define bbox coordinates
-    bbox_lane_1_coord = {'x': 320, 'y': 400, 'w': 100, 'h': 200}
-    bbox_lane_2_coord = {'x': 500, 'y': 400, 'w': 100, 'h': 200}
-    bbox_lane_3_coord = {'x': 700, 'y': 400, 'w': 100, 'h': 200}
-    bbox_lane_4_coord = {'x': 920, 'y': 400, 'w': 100, 'h': 200}
+    bbox_lane_1_coord = {'x': 190, 'y': 470, 'w': 100, 'h': 200}
+    bbox_lane_2_coord = {'x': 420, 'y': 470, 'w': 100, 'h': 200}
+    bbox_lane_3_coord = {'x': 740, 'y': 470, 'w': 100, 'h': 200}
+    bbox_lane_4_coord = {'x': 990, 'y': 470, 'w': 100, 'h': 200}
     
     bbox_lane_1 = bbox_car_per_lane(1, bbox_lane_1_coord)
     bbox_lane_2 = bbox_car_per_lane(2, bbox_lane_2_coord)
@@ -152,48 +165,10 @@ def main():
         frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         # ------------------------------------------------------------------------------
-        box_values = frame_gray[bbox['y']:bbox['y2'],  bbox['x']:bbox['x2']]
-        print('box_values = ' + str(box_values))
-
-        average = round(np.mean(box_values), 1)  # type: ignore
-        # print('average = ' + str(average))
-        cv2.putText(
-            frame_gui, 'mean ' + str(average),
-            (bbox['x'],
-             bbox['y'] - 10),
-            cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
-
-        # Compute the difference between the previous and the current
-        if previous_average is None:
-            difference = 0  # TODO João has questions
-        else:
-            difference = round(abs(average - previous_average), 1)
-
-        previous_average = average  # update previous average
-        cv2.putText(
-            frame_gui, 'dif ' + str(difference),
-            (bbox['x'],
-             bbox['y'] - 35),
-            cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
-
-        # Change detection event
-        change_detection_threshold = 10
-        if difference > change_detection_threshold:
-            change_event = True
-        else:
-            change_event = False
-
-        # Selecting color for putting the change event text as a function of the value
-        if change_event == True:
-            color = (0, 0, 255)
-        else:
-            color = (255, 0, 0)
-
-        cv2.putText(
-            frame_gui, 'event ' + str(change_event),
-            (bbox['x'],
-             bbox['y'] - 70),
-            cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2, cv2.LINE_AA)
+        chage_event_per_lane(frame_gui, frame_gray, bbox_lane_1)
+        chage_event_per_lane(frame_gui, frame_gray, bbox_lane_2)
+        chage_event_per_lane(frame_gui, frame_gray, bbox_lane_3)
+        chage_event_per_lane(frame_gui, frame_gray, bbox_lane_4)
 
         # ---------------------------
         # Count a car
@@ -203,16 +178,21 @@ def main():
         #    number_of_cars += 1 
 
         # Option 2
-        if previous_change_event_4 == False and previous_change_event_3 == False and previous_change_event_2 == False and previous_change_event_1 == False and previous_change_event == False and change_event == True:  # a rising edge
-            number_of_cars += 1
+        # if previous_change_event_4 == False and previous_change_event_3 == False and previous_change_event_2 == False and previous_change_event_1 == False and previous_change_event == False and change_event == True:  # a rising edge
+        #     number_of_cars += 1
 
-        previous_change_event_4 = previous_change_event_3
-        previous_change_event_3 = previous_change_event_2
-        previous_change_event_2 = previous_change_event_1
-        previous_change_event_1 = previous_change_event
+        # previous_change_event_4 = previous_change_event_3
+        # previous_change_event_3 = previous_change_event_2
+        # previous_change_event_2 = previous_change_event_1
+        # previous_change_event_1 = previous_change_event
         
-        previous_change_event = change_event
+        # previous_change_event = change_event
         
+        #////////////////////////-------------------------////////////////////////////
+        # meter formula do count_car_per_lane()
+
+        #nao esquecer
+        #/////////////////////////----------------------//////////////////////
 
         # Draw the number of cars
         cv2.putText(
@@ -224,7 +204,7 @@ def main():
         # cv2.imshow('Image gray', frame_gray)
 
         # Break if q is pressed
-        key = cv2.waitKey(20)
+        key = cv2.waitKey(0)
         # print('key = ' + str(key))
         if key == 113:
             print('You pressed q. Quitting.')
