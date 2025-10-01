@@ -16,6 +16,14 @@ def bbox_car_per_lane(car_lane, bbox):
     bbox['previous_average'] = None
     bbox['change_event'] = False
 
+    bbox['previous_change_event_4'] = False
+    bbox['previous_change_event_3'] = False
+    bbox['previous_change_event_2'] = False
+    bbox['previous_change_event_1'] = False
+    
+    bbox['previous_change_event'] = False
+
+    bbox['number_of_cars'] = 0
     return bbox
 
 def draw_rect_per_lane(bbox,frame_gui):
@@ -68,10 +76,16 @@ def chage_event_per_lane(frame_gui, frame_gray, bbox):
         bbox['y'] - 70),
         cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2, cv2.LINE_AA)
     
+    cv2.putText(
+        frame_gui, '#cars ' + str(bbox['number_of_cars']),
+        (bbox['x'],
+        bbox['y'] - 95),
+        cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2, cv2.LINE_AA)
+    
     return frame_gui, frame_gray, bbox
 
 def count_car_per_lane(bbox):
-    print('Hello World')
+    #print('Hello World')
     #     # Option 2
     # if previous_change_event_4 == False and previous_change_event_3 == False and previous_change_event_2 == False and previous_change_event_1 == False and previous_change_event == False and change_event == True:  # a rising edge
     #     number_of_cars += 1
@@ -82,6 +96,18 @@ def count_car_per_lane(bbox):
     # previous_change_event_1 = previous_change_event
     
     # previous_change_event = change_event
+
+    if bbox['previous_change_event_4'] == False and bbox['previous_change_event_3'] == False and bbox['previous_change_event_2'] == False and bbox['previous_change_event_1'] == False and bbox['previous_change_event'] == False and bbox['change_event'] == True:  # a rising edge
+        bbox['number_of_cars'] += 1
+
+    bbox['previous_change_event_4'] = bbox['previous_change_event_3']
+    bbox['previous_change_event_3'] = bbox['previous_change_event_2']
+    bbox['previous_change_event_2'] = bbox['previous_change_event_1']
+    bbox['previous_change_event_1'] = bbox['previous_change_event']
+    
+    bbox['previous_change_event'] = bbox['change_event']
+
+    return bbox
 
 def main():
 
@@ -185,14 +211,15 @@ def main():
         # previous_change_event_3 = previous_change_event_2
         # previous_change_event_2 = previous_change_event_1
         # previous_change_event_1 = previous_change_event
-        
+         
         # previous_change_event = change_event
         
-        #////////////////////////-------------------------////////////////////////////
-        # meter formula do count_car_per_lane()
+        count_car_per_lane(bbox_lane_1)
+        count_car_per_lane(bbox_lane_2)
+        count_car_per_lane(bbox_lane_3)
+        count_car_per_lane(bbox_lane_4)
 
-        #nao esquecer
-        #/////////////////////////----------------------//////////////////////
+        total_number_of_cars = bbox_lane_1['number_of_cars'] + bbox_lane_2['number_of_cars'] + bbox_lane_3['number_of_cars'] + bbox_lane_4['number_of_cars']
 
         # Draw the number of cars
         cv2.putText(
