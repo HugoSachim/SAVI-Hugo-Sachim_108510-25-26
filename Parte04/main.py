@@ -147,66 +147,29 @@ def main():
     # Fusion or stitching
     # ------------------------------
 
-    alpha = 0.8
-    mosaic_image = t_image*alpha + q_image_transformed*(1-alpha)
+    # alpha = how much the target image dominates (0.0–1.0)
+    alpha = 0.8  
+    beta = 1 - alpha
 
-    # Convert the mosaic back to unsigned integer 8 bits (uint8)
-    mosaic_image = mosaic_image.astype(np.uint8)
+    # ⚙️ Basic weighted blending
+    mosaic_image = cv2.addWeighted(t_image, alpha, q_image_transformed, beta, 0)
 
-    # Draw matches using opencv drawmatches
-    # image_matches = deepcopy(q_image)
-    image_matches = cv2.drawMatches(q_image,  # type: ignore
-                                    q_key_points,
-                                    t_image,  # type: ignore
-                                    t_key_points,
-                                    matches, None)  # type: ignore
-
-    win_name = 'query image'
-    cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
-    cv2.imshow(win_name, q_image_gui)  # type: ignore
-    win_name = 'target image'
-    cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
-    cv2.imshow(win_name, t_image_gui)  # type: ignore
-
-    win_name = 'query image transformed'
-    cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
-    cv2.imshow(win_name, q_image_transformed)  # type: ignore
-
-    win_name = 'matches_image'
-    cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
-    cv2.imshow(win_name, image_matches)  # type: ignore
-
-    win_name = 'mosaic_image'
-    cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
-    cv2.imshow(win_name, mosaic_image)  # type: ignore
-
-    
-
-
-    alpha = 0.8
-
-    # Create a mask where q_image_transformed is black
-    mask_black = np.all(q_image_transformed == 0, axis=2)  # shape (H, W), True if black
-
-    # Initialize output
-    mosaic_image = np.empty_like(q_image_transformed, dtype=np.float32)
-
-    # Normal alpha blending where q_image_transformed is NOT black
-    mosaic_image[~mask_black] = t_image[~mask_black]*alpha + q_image_transformed[~mask_black]*(1-alpha)
-
-    # Copy t_image pixels where q_image_transformed is black
+    # ⚙️ Optional fix: replace black pixels from the transformed image
+    mask_black = np.all(q_image_transformed == 0, axis=2)
     mosaic_image[mask_black] = t_image[mask_black]
 
-    # Convert back to uint8 for display/save
+    # Convert to uint8 (safe for display)
     mosaic_image = np.clip(mosaic_image, 0, 255).astype(np.uint8)
 
-
-
-    win_name = 'mosaic_image_s'
+    # ⚙️ Display (same window style as before)
+    win_name = 'mosaic_image'
     cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
-    cv2.imshow(win_name, mosaic_image)  # type: ignore
+    cv2.imshow(win_name, mosaic_image)
 
 
+
+
+    cv2.waitKey(0)
 
     #
     # ------------------------------------
