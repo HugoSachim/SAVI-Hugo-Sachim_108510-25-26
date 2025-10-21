@@ -57,8 +57,7 @@ def objectiveFunction(params, shared_mem):
 
     # Applying the image model
     q_image_out = changeImageColor(q_image, s=s, b=b, mask = q_mask)
-    
-    shared_mem['q_mask'] = q_image_out
+    shared_mem['q_image'] = q_image_out
 
     # Query pixel
     x_q, y_q = 1300, 1234

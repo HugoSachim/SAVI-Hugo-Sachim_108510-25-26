@@ -85,7 +85,7 @@ def main():
 
     initial_params = [1.0, 0.0]
     result = least_squares(partial(objectiveFunction, shared_mem=shared_mem),
-                           initial_params, diff_step = 0.1)
+                           initial_params, diff_step = 0.05)
 
     print('Optimization finished. Result=\n' + str(result))
 
