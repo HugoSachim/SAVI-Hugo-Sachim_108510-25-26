@@ -82,7 +82,7 @@ def main():
     # Start optimization
     # -------------------------------------
     shared_mem = {'q_image': q_image, 't_image': t_image, 'q_mask': q_mask, 'mosaic_image': mosaic_image}
-
+..
     initial_params = [1.0, 0.0]
     result = least_squares(partial(objectiveFunction, shared_mem=shared_mem),
                            initial_params, diff_step = 0.05)
