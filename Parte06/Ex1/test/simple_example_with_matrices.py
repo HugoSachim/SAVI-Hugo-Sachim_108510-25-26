@@ -8,7 +8,7 @@ import cv2  # import the opencv library
 # from matplotlib import pyplot as plt
 import numpy as np
 import argparse
-from auxiliary_functions import changeImageColor
+from Parte06.Ex1.auxiliary_functions_1 import changeImageColor
 
 # import matplotlib
 # matplotlib.use('Agg')
