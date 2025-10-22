@@ -33,18 +33,17 @@ def changeImageColor(image_in, s, b, mask=None):
     image_out = (image_out_float).astype(np.uint8)
 
     # Copy back the original values of image_in in the regions where the mask is zero
-    # if mask is not None:
-
-    #     mask_negated = np.logical_not(mask)
-    #     image_out[mask_negated] = image_in[mask_negated]
+    if mask is not None:
+        mask_negated = np.logical_not(mask)
+        image_out[mask_negated] = image_in[mask_negated]
 
     return image_out
 
 
 def computeMosaic(t_image, q_image, mask):
 
-    mosaic_image = deepcopy(q_image)  # the outer part is alreay ok, jsut need to change the middel
-    mosaic_image[mask] = t_image[mask]
+    mosaic_image = deepcopy(t_image)  # the outer part is alreay ok, jsut need to change the middel
+    mosaic_image[mask] = 0.5 * t_image[mask] + 0.5 * q_image[mask]
     # mosaic_image[q_mask] = q_image_transformed[q_mask]
 
     # Convert the mosaic back to unsigned integer 8 bits (uint8)
@@ -65,29 +64,26 @@ def objectiveFunction(params, shared_mem):
     q_image = shared_mem['q_image']
     t_image = shared_mem['t_image']
     q_mask = shared_mem['q_mask']
-    q_mask = np.logical_not(q_mask)
 
-    
     # Applying the image model
-    t_image_changed = changeImageColor(t_image, s=s, b=b, mask=q_mask)
+    q_image_changed = changeImageColor(q_image, s=s, b=b, mask=q_mask)
 
     # Compute the error
-    diff_image = cv2.absdiff(q_image, t_image_changed)
+    diff_image = cv2.absdiff(t_image, q_image_changed)
 
     # Calculate the average of the absolute differences
     # The mean is calculated across all elements (pixels and channels) in the diff_image.
-    error = np.mean(diff_image[np.logical_not(q_mask)])
+    error = np.mean(diff_image[q_mask])
 
     # TODO recompute the mosaic and show it
-    mosaic_image = computeMosaic(t_image_changed, q_image, q_mask)
+    mosaic_image = computeMosaic(t_image, q_image_changed, q_mask)
 
     # Draw the new line
-    win_name = 'target image'
+    win_name = 'query image'
     cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
-    cv2.imshow(win_name, t_image_changed)  # type: ignore
+    cv2.imshow(win_name, q_image_changed)  # type: ignore
 
-
-    win_name = 'mosaic_target_changed'
+    win_name = 'mosaic_querry_changed'
     cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
     cv2.imshow(win_name, mosaic_image)  # type: ignore
 

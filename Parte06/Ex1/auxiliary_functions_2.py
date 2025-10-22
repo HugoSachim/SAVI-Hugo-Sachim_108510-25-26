@@ -63,7 +63,7 @@ def objectiveFunction(params, shared_mem):
     s = params[0]
     b = params[1]
     s_2 = params[2]
-    b_2 = params[2]
+    b_2 = params[3]
     print('s = ' + str(s))
     print('b = ' + str(b))
     print('s_2 = ' + str(s_2))
@@ -91,7 +91,7 @@ def objectiveFunction(params, shared_mem):
     cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
     cv2.imshow(win_name, q_image_changed)  # type: ignore
 
-    win_name = 'mosaic'
+    win_name = 'mosaic_querry_and_target_changed'
     cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)
     cv2.imshow(win_name, mosaic_image)  # type: ignore
 
