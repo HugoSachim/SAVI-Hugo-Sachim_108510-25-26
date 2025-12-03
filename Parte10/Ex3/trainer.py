@@ -42,7 +42,7 @@ class Trainer():
 
             # ----------------------
             # Treino
-            # ----------------------
+            # ---------------------
             for batch_idx, (image_tensor, label_gt_tensor) in enumerate(
                     tqdm(self.train_dataloader, desc=f"Epoch {epoch_idx+1}", leave=False)):
 
@@ -79,7 +79,6 @@ class Trainer():
             # ----------------------
             self.draw()
             plt.pause(0.1)  # mostra 2 segundos
-
             # ----------------------
             # Avaliar métricas no dataset de teste
             # ----------------------
@@ -87,6 +86,7 @@ class Trainer():
             print(f"Epoch {epoch_idx+1} Statistics saved!")
 
         print("Training finished.")
+        self.evaluate()
 
     # ----------------------------
     # Visualização loss
@@ -130,7 +130,7 @@ class Trainer():
         plt.ylabel("Ground Truth")
         plt.title("Confusion Matrix")
         plt.show(block=False)
-        plt.pause(0.1)  # mostra 2 segundos
+        #plt.pause(2)  # mostra 2 segundos
         plt.close()
 
         # Calcula estatísticas
