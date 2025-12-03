@@ -1,0 +1,60 @@
+_wandb:
+    value:
+        cli_version: 0.23.1
+        e:
+            mnc5cj771z0a3jqnmw3howcjn6dj675b:
+                args:
+                    - -pe
+                    - "1.0"
+                    - -ne
+                    - "5"
+                codePath: Parte11/Ex1/main.py
+                codePathLocal: main.py
+                cpu_count: 4
+                cpu_count_logical: 4
+                disk:
+                    /:
+                        total: "58581958656"
+                        used: "43564150784"
+                email: hugosachim@ua.pt
+                executable: /usr/bin/python3
+                git:
+                    commit: 02e2bf204d521b38c836fc0d33679f0c06345efe
+                    remote: https://github.com/HugoSachim/SAVI-Hugo-Sachim_108510-25-26.git
+                host: hogu-laptop
+                memory:
+                    total: "8134246400"
+                os: Linux-6.14.0-36-generic-x86_64-with-glibc2.39
+                program: /home/hogu/Desktop/SAVI-Hugo-Sachim_108510-25-26/Parte11/Ex1/./main.py
+                python: CPython 3.12.3
+                root: /home/hogu/Desktop/SAVI-Hugo-Sachim_108510-25-26/Parte11/Ex1
+                startedAt: "2025-12-03T15:34:52.413061Z"
+                writerId: mnc5cj771z0a3jqnmw3howcjn6dj675b
+        m: []
+        python_version: 3.12.3
+        t:
+            "1":
+                - 1
+                - 41
+            "2":
+                - 1
+                - 41
+            "3":
+                - 13
+                - 16
+            "4": 3.12.3
+            "5": 0.23.1
+            "12": 0.23.1
+            "13": linux-x86_64
+batch_size:
+    value: 64
+dataset_folder:
+    value: /home/hogu/Desktop/SAVI-Hugo-Sachim_108510-25-26/savi_datasets/mnist
+experiment_full_name:
+    value: /home/hogu/Desktop/SAVI-Hugo-Sachim_108510-25-26/savi_datasets/savi_experiments/2025-12-03 15:34
+experiment_path:
+    value: /home/hogu/Desktop/SAVI-Hugo-Sachim_108510-25-26/savi_datasets/savi_experiments
+num_epochs:
+    value: 5
+percentage_examples:
+    value: 1

@@ -1,0 +1,34 @@
+{
+  "os":  "Linux-6.14.0-36-generic-x86_64-with-glibc2.39",
+  "python":  "CPython 3.12.3",
+  "startedAt":  "2025-12-03T15:34:52.413061Z",
+  "args":  [
+    "-pe",
+    "1.0",
+    "-ne",
+    "5"
+  ],
+  "program":  "/home/hogu/Desktop/SAVI-Hugo-Sachim_108510-25-26/Parte11/Ex1/./main.py",
+  "codePath":  "Parte11/Ex1/main.py",
+  "codePathLocal":  "main.py",
+  "git":  {
+    "remote":  "https://github.com/HugoSachim/SAVI-Hugo-Sachim_108510-25-26.git",
+    "commit":  "02e2bf204d521b38c836fc0d33679f0c06345efe"
+  },
+  "email":  "hugosachim@ua.pt",
+  "root":  "/home/hogu/Desktop/SAVI-Hugo-Sachim_108510-25-26/Parte11/Ex1",
+  "host":  "hogu-laptop",
+  "executable":  "/usr/bin/python3",
+  "cpu_count":  4,
+  "cpu_count_logical":  4,
+  "disk":  {
+    "/":  {
+      "total":  "58581958656",
+      "used":  "43564150784"
+    }
+  },
+  "memory":  {
+    "total":  "8134246400"
+  },
+  "writerId":  "mnc5cj771z0a3jqnmw3howcjn6dj675b"
+}
